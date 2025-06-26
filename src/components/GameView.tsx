@@ -27,7 +27,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
           <div className="flex items-center space-x-6">
             {/* Beyonder Logo */}
             <img 
-              src="/placeholder.svg" 
+              src="https://beyonder.eu/storage/uploads/0184aeeb-1507-4a47-8e6e-c3076839cab0/logo-name.svg" 
               alt="Beyonder" 
               className="h-8 w-auto brightness-0 invert"
             />
