@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,7 @@ import { ArrowLeft, Users, Camera, CameraOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiplayerGame } from '@/hooks/useMultiplayerGame';
 import GameChat from './GameChat';
+import ScoreMessageOverlay from './ScoreMessageOverlay';
 
 interface GameViewProps {
   players: {
@@ -28,6 +28,11 @@ const GameView = ({ players, onBack }: GameViewProps) => {
   const [camera1Active, setCamera1Active] = useState(true);
   const [camera2Active, setCamera2Active] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
+  const [showScoreMessage, setShowScoreMessage] = useState(false);
+  const [scoreMessageData, setScoreMessageData] = useState<{
+    score: number;
+    team: 'team1' | 'team2';
+  } | null>(null);
 
   // Use scores from the current game if available, otherwise use local state
   const team1Score = currentGame?.team1_score || 0;
@@ -52,6 +57,14 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     const success = await updateScore(currentGame.id, team, scoreValue);
     if (!success) {
       console.error('Failed to update score');
+      return;
+    }
+
+    // Show message overlay if user is part of the team that scored
+    const isUserInTeam = (team === 'team1' && canControlTeam1) || (team === 'team2' && canControlTeam2);
+    if (isUserInTeam) {
+      setScoreMessageData({ score: scoreValue, team });
+      setShowScoreMessage(true);
     }
   };
 
@@ -321,6 +334,19 @@ const GameView = ({ players, onBack }: GameViewProps) => {
         isOpen={chatOpen}
         onToggle={() => setChatOpen(!chatOpen)}
       />
+
+      {/* Score Message Overlay */}
+      {scoreMessageData && (
+        <ScoreMessageOverlay
+          score={scoreMessageData.score}
+          team={scoreMessageData.team}
+          show={showScoreMessage}
+          onHide={() => {
+            setShowScoreMessage(false);
+            setScoreMessageData(null);
+          }}
+        />
+      )}
     </div>
   );
 };
