@@ -50,23 +50,32 @@ const MainMenu = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-blue-100/30 via-transparent to-transparent"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-slate-600/5"></div>
       
       <div className="relative z-10">
         {/* Header */}
-        <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200 shadow-sm">
+        <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center">
-                  <span className="text-xl">🎯</span>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
-                    Cornhole Arena
-                  </h1>
-                  <p className="text-sm text-slate-600 font-medium">Professional Competition Platform</p>
+              <div className="flex items-center space-x-6">
+                {/* Beyonder Logo */}
+                <img 
+                  src="/placeholder.svg" 
+                  alt="Beyonder" 
+                  className="h-8 w-auto"
+                />
+                
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+                    <span className="text-lg">🎯</span>
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold text-slate-900">
+                      Cornhole Arena
+                    </h1>
+                    <p className="text-sm text-slate-600">Professional Competition Platform</p>
+                  </div>
                 </div>
               </div>
               

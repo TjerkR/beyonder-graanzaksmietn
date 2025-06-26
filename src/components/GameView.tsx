@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +24,14 @@ const GameView = ({ players, onBack }: GameViewProps) => {
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
+            {/* Beyonder Logo */}
+            <img 
+              src="/placeholder.svg" 
+              alt="Beyonder" 
+              className="h-8 w-auto brightness-0 invert"
+            />
+            
             <Button
               onClick={onBack}
               variant="outline"
