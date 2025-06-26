@@ -235,6 +235,36 @@ export type Database = {
         }
         Relationships: []
       }
+      player_stats: {
+        Row: {
+          created_at: string
+          games_lost: number
+          games_won: number
+          id: string
+          player_id: string
+          total_points: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          games_lost?: number
+          games_won?: number
+          id?: string
+          player_id: string
+          total_points?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          games_lost?: number
+          games_won?: number
+          id?: string
+          player_id?: string
+          total_points?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -355,7 +385,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_player_stats: {
+        Args: {
+          player_id: string
+          points_to_add: number
+          games_won: number
+          games_lost: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

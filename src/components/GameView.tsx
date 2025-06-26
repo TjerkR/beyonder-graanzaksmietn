@@ -87,7 +87,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
       const team1Won = team1Score > team2Score;
       const team2Won = team2Score > team1Score;
       
-      // Update player statistics
+      // Update player statistics using the database function
       const updates = [];
       
       // Team 1 players
