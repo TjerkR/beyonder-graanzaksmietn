@@ -29,6 +29,14 @@ const VictoryScreen = ({ show, winningTeam, isUserOnWinningTeam, onClose }: Vict
   const teamColor = winningTeam === 'team1' ? 'from-blue-600 to-blue-800' : 'from-purple-600 to-purple-800';
   const resultColor = isUserOnWinningTeam ? 'from-green-600 to-green-800' : 'from-red-600 to-red-800';
 
+  const handleVideoEnd = () => {
+    setVideoEnded(true);
+    // Auto-close after a short delay to let users see the final message
+    setTimeout(() => {
+      onClose();
+    }, 3000);
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
       {/* Close button */}
@@ -57,10 +65,10 @@ const VictoryScreen = ({ show, winningTeam, isUserOnWinningTeam, onClose }: Vict
       <video
         className="w-full h-full object-contain"
         autoPlay
-        onEnded={() => setVideoEnded(true)}
+        onEnded={handleVideoEnd}
         onError={(e) => {
           console.error('Video failed to load:', e);
-          setVideoEnded(true);
+          handleVideoEnd();
         }}
       >
         <source src={videoUrl} type="video/mp4" />
@@ -77,17 +85,14 @@ const VictoryScreen = ({ show, winningTeam, isUserOnWinningTeam, onClose }: Vict
             <h2 className="text-3xl font-semibold text-white mb-6">
               {isUserOnWinningTeam ? 'You Won!' : 'You Lost!'}
             </h2>
-            <p className="text-white/90 text-lg mb-8">
+            <p className="text-white/90 text-lg mb-2">
               {isUserOnWinningTeam 
                 ? 'Congratulations on an amazing game!' 
                 : 'Better luck next time!'}
             </p>
-            <Button
-              onClick={onClose}
-              className="bg-white text-slate-900 hover:bg-white/90 font-semibold px-8 py-3 text-lg"
-            >
-              Continue
-            </Button>
+            <p className="text-white/70 text-sm">
+              Closing automatically in 3 seconds...
+            </p>
           </div>
         </div>
       )}
