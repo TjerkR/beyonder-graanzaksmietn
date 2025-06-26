@@ -14,53 +14,83 @@ export type Database = {
           completed_at: string | null
           created_at: string
           id: string
-          player1_id: string
-          player1_score: number | null
-          player2_id: string | null
           player2_score: number | null
           status: string | null
-          winner_id: string | null
+          team1_player1_id: string
+          team1_player2_id: string
+          team1_score: number | null
+          team2_player1: string
+          team2_player2: string
+          winner1_id: string | null
+          winner2_id: string | null
         }
         Insert: {
           completed_at?: string | null
           created_at?: string
           id?: string
-          player1_id: string
-          player1_score?: number | null
-          player2_id?: string | null
           player2_score?: number | null
           status?: string | null
-          winner_id?: string | null
+          team1_player1_id: string
+          team1_player2_id: string
+          team1_score?: number | null
+          team2_player1: string
+          team2_player2: string
+          winner1_id?: string | null
+          winner2_id?: string | null
         }
         Update: {
           completed_at?: string | null
           created_at?: string
           id?: string
-          player1_id?: string
-          player1_score?: number | null
-          player2_id?: string | null
           player2_score?: number | null
           status?: string | null
-          winner_id?: string | null
+          team1_player1_id?: string
+          team1_player2_id?: string
+          team1_score?: number | null
+          team2_player1?: string
+          team2_player2?: string
+          winner1_id?: string | null
+          winner2_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "games_player1_id_fkey"
-            columns: ["player1_id"]
+            foreignKeyName: "games_team1_player1_id_fkey"
+            columns: ["team1_player1_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "games_player2_id_fkey"
-            columns: ["player2_id"]
+            foreignKeyName: "games_team1_player2_id_fkey"
+            columns: ["team1_player2_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "games_winner_id_fkey"
-            columns: ["winner_id"]
+            foreignKeyName: "games_team2_player1_fkey"
+            columns: ["team2_player1"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_team2_player2_fkey"
+            columns: ["team2_player2"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_winner1_id_fkey"
+            columns: ["winner1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_winner2_id_fkey"
+            columns: ["winner2_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -74,6 +104,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          location_id: string | null
           updated_at: string
         }
         Insert: {
@@ -82,6 +113,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          location_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -90,6 +122,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          location_id?: string | null
           updated_at?: string
         }
         Relationships: []
