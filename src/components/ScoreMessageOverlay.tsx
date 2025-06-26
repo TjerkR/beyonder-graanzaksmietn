@@ -9,59 +9,20 @@ interface ScoreMessageOverlayProps {
   onHide: () => void;
 }
 
-const scoreMessages = {
-  0: {
-    title: "0 points! That was absolutely horrible!",
-    subtitle: "A complete disaster. Let's never speak of it again."
-  },
-  1: {
-    title: "1 point! Yikes, that was bad.",
-    subtitle: "Cringeworthy and hard to watch. Serious rework needed."
-  },
-  2: {
-    title: "2 points! That really missed the mark.",
-    subtitle: "Intent was there, but the result? Not even close."
-  },
-  3: {
-    title: "3 points! Hmm… not great.",
-    subtitle: "Some effort, but overall just disappointing."
-  },
-  4: {
-    title: "4 points! Well, that didn't go as planned.",
-    subtitle: "There were glimpses of promise, but it fizzled out."
-  },
-  5: {
-    title: "5 points! Meh, it was okay I guess.",
-    subtitle: "Mediocre at best — no offense, but no applause either."
-  },
-  6: {
-    title: "6 points! Alright, not bad.",
-    subtitle: "Perfectly average. Neither thrilling nor upsetting."
-  },
-  7: {
-    title: "7 points! Hey, that was decent!",
-    subtitle: "Solid work. You're onto something."
-  },
-  8: {
-    title: "8 points! Now we're talking!",
-    subtitle: "Things are clicking — this is getting really good."
-  },
-  9: {
-    title: "9 points! That was actually really good!",
-    subtitle: "Genuinely impressive. People took notice."
-  },
-  10: {
-    title: "10 points! Wow, that was fantastic!",
-    subtitle: "You crushed it. Big energy, big results."
-  },
-  11: {
-    title: "11 points! Outstanding performance!",
-    subtitle: "Nearly perfect execution. You're at the top of your game."
-  },
-  12: {
-    title: "12 points! Amazing! The whole world loves you!",
-    subtitle: "Legendary. The kind of success that echoes through time."
-  }
+const scoreImages = {
+  0: "/lovable-uploads/0d8b6b84-c7b2-4dbb-b8f1-98a5f69c4b73.png",
+  1: "/lovable-uploads/5aa5dd4c-5cd2-46ac-9f2b-8ef3d4de5dd6.png",
+  2: "/lovable-uploads/2ee5ee2d-efda-4b67-8b72-6e5e4a95e993.png",
+  3: "/lovable-uploads/f02ee90a-71dd-4080-aa21-4b21b1eda5a8.png",
+  4: "/lovable-uploads/3e34ca85-bbe6-41c7-bb19-5e0a81c6b47b.png",
+  5: "/lovable-uploads/6d46b988-4062-4fb3-8eaa-d43e8d9e9a9e.png",
+  6: "/lovable-uploads/b24a9fb8-7f49-47a4-a4c5-6d2ab1d05a2a.png",
+  7: "/lovable-uploads/68d3baba-f7a6-4b2f-bab7-ccf0e3fc4dd3.png",
+  8: "/lovable-uploads/7a0825b8-8cad-47b3-a346-b3c30b7f44b7.png",
+  9: "/lovable-uploads/b02e6b32-3b7a-4a7b-b5e4-b3c30b7f44b7.png",
+  10: "/lovable-uploads/41a2754e-6fe2-4d19-a369-f97d5ac0d925.png",
+  11: "/lovable-uploads/5aa5dd4c-5cd2-46ac-9f2b-8ef3d4de5dd6.png", // Using image 1 as placeholder for 11
+  12: "/lovable-uploads/4256c128-83c6-4935-9fed-af67dbee0e1d.png"
 };
 
 const ScoreMessageOverlay = ({ score, team, show, onHide }: ScoreMessageOverlayProps) => {
@@ -81,19 +42,20 @@ const ScoreMessageOverlay = ({ score, team, show, onHide }: ScoreMessageOverlayP
 
   if (!show) return null;
 
-  const message = scoreMessages[score as keyof typeof scoreMessages];
+  const imageUrl = scoreImages[score as keyof typeof scoreImages];
   const teamColor = team === 'team1' ? 'from-blue-600 to-blue-800' : 'from-purple-600 to-purple-800';
   const teamBorder = team === 'team1' ? 'border-blue-500' : 'border-purple-500';
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}>
-      <Card className={`bg-gradient-to-br ${teamColor} border-2 ${teamBorder} backdrop-blur-sm max-w-md mx-4 transform transition-all duration-300 ${visible ? 'scale-100' : 'scale-95'}`}>
+      <Card className={`bg-gradient-to-br ${teamColor} border-2 ${teamBorder} backdrop-blur-sm max-w-lg mx-4 transform transition-all duration-300 ${visible ? 'scale-100' : 'scale-95'}`}>
         <CardContent className="p-8 text-center">
-          <div className="text-2xl font-bold text-white mb-4">
-            {message.title}
-          </div>
-          <div className="text-lg text-white/90">
-            {message.subtitle}
+          <div className="mb-6">
+            <img 
+              src={imageUrl} 
+              alt={`${score} points`}
+              className="w-full h-auto max-w-md mx-auto rounded-lg shadow-lg"
+            />
           </div>
           <div className="mt-6 text-sm text-white/70">
             Team {team === 'team1' ? '1' : '2'} • Message disappears in 3 seconds
