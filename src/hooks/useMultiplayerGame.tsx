@@ -94,6 +94,27 @@ export const useMultiplayerGame = () => {
     return true;
   };
 
+  const endGame = async (gameId: string) => {
+    if (!user || !currentGame) return false;
+
+    const { error } = await supabase
+      .from('multiplayer_games')
+      .update({ 
+        status: 'completed',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', gameId);
+
+    if (error) {
+      console.error('Error ending game:', error);
+      return false;
+    }
+
+    // Clear the current game
+    setCurrentGame(null);
+    return true;
+  };
+
   const checkForActiveGame = async () => {
     if (!user) return;
 
@@ -155,6 +176,9 @@ export const useMultiplayerGame = () => {
             if (isPlayerInGame && game.status === 'active') {
               console.log('User is part of this game, updating current game');
               setCurrentGame(game);
+            } else if (isPlayerInGame && game.status === 'completed') {
+              console.log('Game completed, clearing current game');
+              setCurrentGame(null);
             }
           }
         }
@@ -171,6 +195,7 @@ export const useMultiplayerGame = () => {
     loading,
     createGame,
     updateScore,
+    endGame,
     checkForActiveGame
   };
 };

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowLeft, Users, Camera, CameraOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiplayerGame } from '@/hooks/useMultiplayerGame';
+import { supabase } from '@/integrations/supabase/client';
 import GameChat from './GameChat';
 import ScoreMessageOverlay from './ScoreMessageOverlay';
 
@@ -24,7 +26,7 @@ interface GameViewProps {
 
 const GameView = ({ players, onBack }: GameViewProps) => {
   const { user } = useAuth();
-  const { currentGame, updateScore } = useMultiplayerGame();
+  const { currentGame, updateScore, endGame } = useMultiplayerGame();
   const [camera1Active, setCamera1Active] = useState(true);
   const [camera2Active, setCamera2Active] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
@@ -33,6 +35,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     score: number;
     team: 'team1' | 'team2';
   } | null>(null);
+  const [isEndingGame, setIsEndingGame] = useState(false);
 
   // Use scores from the current game if available, otherwise use local state
   const team1Score = currentGame?.team1_score || 0;
@@ -48,13 +51,19 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     currentGame?.team2_player2_id === user.id
   );
 
-  const handleScoreChange = async (team: 'team1' | 'team2', newScore: string) => {
+  // Check if either team has reached 21 points
+  const gameCanEnd = team1Score >= 21 || team2Score >= 21;
+
+  const handleScoreChange = async (team: 'team1' | 'team2', scoreToAdd: string) => {
     if (!currentGame) return;
 
-    const scoreValue = parseInt(newScore);
-    console.log(`Updating ${team} score to ${scoreValue}`);
+    const pointsToAdd = parseInt(scoreToAdd);
+    const currentTeamScore = team === 'team1' ? team1Score : team2Score;
+    const newScore = currentTeamScore + pointsToAdd;
     
-    const success = await updateScore(currentGame.id, team, scoreValue);
+    console.log(`Adding ${pointsToAdd} points to ${team}. New total: ${newScore}`);
+    
+    const success = await updateScore(currentGame.id, team, newScore);
     if (!success) {
       console.error('Failed to update score');
       return;
@@ -63,8 +72,73 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     // Show message overlay if user is part of the team that scored
     const isUserInTeam = (team === 'team1' && canControlTeam1) || (team === 'team2' && canControlTeam2);
     if (isUserInTeam) {
-      setScoreMessageData({ score: scoreValue, team });
+      setScoreMessageData({ score: pointsToAdd, team });
       setShowScoreMessage(true);
+    }
+  };
+
+  const handleEndGame = async () => {
+    if (!currentGame || !user || isEndingGame) return;
+
+    setIsEndingGame(true);
+    
+    try {
+      // Determine winning team
+      const team1Won = team1Score > team2Score;
+      const team2Won = team2Score > team1Score;
+      
+      // Update player statistics
+      const updates = [];
+      
+      // Team 1 players
+      updates.push(
+        supabase.rpc('update_player_stats', {
+          player_id: currentGame.team1_player1_id,
+          points_to_add: team1Score,
+          games_won: team1Won ? 1 : 0,
+          games_lost: team2Won ? 1 : 0
+        })
+      );
+      
+      updates.push(
+        supabase.rpc('update_player_stats', {
+          player_id: currentGame.team1_player2_id,
+          points_to_add: team1Score,
+          games_won: team1Won ? 1 : 0,
+          games_lost: team2Won ? 1 : 0
+        })
+      );
+      
+      // Team 2 players
+      updates.push(
+        supabase.rpc('update_player_stats', {
+          player_id: currentGame.team2_player1_id,
+          points_to_add: team2Score,
+          games_won: team2Won ? 1 : 0,
+          games_lost: team1Won ? 1 : 0
+        })
+      );
+      
+      updates.push(
+        supabase.rpc('update_player_stats', {
+          player_id: currentGame.team2_player2_id,
+          points_to_add: team2Score,
+          games_won: team2Won ? 1 : 0,
+          games_lost: team1Won ? 1 : 0
+        })
+      );
+
+      // Execute all updates
+      await Promise.all(updates);
+
+      // End the game
+      await endGame(currentGame.id);
+
+      // Navigate back to main menu
+      onBack();
+    } catch (error) {
+      console.error('Error ending game:', error);
+      setIsEndingGame(false);
     }
   };
 
@@ -223,12 +297,11 @@ const GameView = ({ players, onBack }: GameViewProps) => {
               </div>
               <div className="flex justify-center mt-6">
                 <Select 
-                  value={team1Score.toString()} 
                   onValueChange={(value) => handleScoreChange('team1', value)}
                   disabled={!canControlTeam1}
                 >
-                  <SelectTrigger className="w-24 bg-slate-700 border-slate-600 text-white">
-                    <SelectValue />
+                  <SelectTrigger className="w-32 bg-slate-700 border-slate-600 text-white">
+                    <SelectValue placeholder="Add points" />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-800 border-slate-600">
                     {scoreOptions.map((score) => (
@@ -237,7 +310,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                         value={score.toString()}
                         className="text-white hover:bg-slate-700"
                       >
-                        {score}
+                        +{score} points
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -276,12 +349,11 @@ const GameView = ({ players, onBack }: GameViewProps) => {
               </div>
               <div className="flex justify-center mt-6">
                 <Select 
-                  value={team2Score.toString()} 
                   onValueChange={(value) => handleScoreChange('team2', value)}
                   disabled={!canControlTeam2}
                 >
-                  <SelectTrigger className="w-24 bg-slate-700 border-slate-600 text-white">
-                    <SelectValue />
+                  <SelectTrigger className="w-32 bg-slate-700 border-slate-600 text-white">
+                    <SelectValue placeholder="Add points" />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-800 border-slate-600">
                     {scoreOptions.map((score) => (
@@ -290,7 +362,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                         value={score.toString()}
                         className="text-white hover:bg-slate-700"
                       >
-                        {score}
+                        +{score} points
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -308,7 +380,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                 🎯 Multiplayer Cornhole Match
               </div>
               <p className="text-slate-400 mb-6 text-sm">
-                Live camera feeds connected • Real-time scoring • {canControlTeam1 || canControlTeam2 ? 'Score control enabled' : 'View only mode'}
+                Live camera feeds connected • Real-time scoring • {gameCanEnd ? 'Game can be ended!' : 'First team to 21 wins!'}
               </p>
               <div className="flex justify-center space-x-4">
                 <Button 
@@ -318,9 +390,11 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                   Reset Scores
                 </Button>
                 <Button 
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                  onClick={handleEndGame}
+                  disabled={!gameCanEnd || isEndingGame}
+                  className={`${gameCanEnd ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'} text-white disabled:opacity-50`}
                 >
-                  End Game
+                  {isEndingGame ? 'Ending Game...' : 'End Game'}
                 </Button>
               </div>
             </CardContent>
