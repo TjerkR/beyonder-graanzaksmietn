@@ -215,7 +215,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
           </div>
         </div>
 
-        {/* Live Camera Feeds */}
+        {/* Live Camera Feeds - Portrait Format */}
         <div className="grid lg:grid-cols-2 gap-6 mb-8">
           <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-blue-900/20 to-blue-800/20 border-b border-slate-700">
@@ -225,18 +225,18 @@ const GameView = ({ players, onBack }: GameViewProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="relative aspect-video bg-gradient-to-b from-slate-700 to-slate-800 flex items-center justify-center">
+              <div className="relative bg-gradient-to-b from-slate-700 to-slate-800 flex items-center justify-center" style={{ aspectRatio: '9/16' }}>
                 {camera1Active ? (
-                  <div className="text-center">
-                    <div className="w-40 h-24 bg-gradient-to-b from-amber-600 to-amber-800 rounded-lg shadow-2xl mb-4 relative border border-amber-500/20">
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-black rounded-full border-4 border-white shadow-lg"></div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg"></div>
-                    </div>
-                    <div className="flex items-center justify-center space-x-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      <p className="text-sm text-green-400 font-medium">Live Feed</p>
-                    </div>
-                  </div>
+                  <video
+                    className="w-full h-full object-cover rounded-b-lg"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  >
+                    <source src="https://zqierduvidlvcdxkpiba.supabase.co/storage/v1/object/sign/beyonder-graansmiet-bucket/Video_20250626_112458_249.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDQxNGMxMi00Zjg1LTQ0MTAtOTViZS0yMGQwODdkMThlZjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJiZXlvbmRlci1ncmFhbnNtaWV0LWJ1Y2tldC9WaWRlb18yMDI1MDYyNl8xMTI0NThfMjQ5Lm1wNCIsImlhdCI6MTc1MDk0NzM0MywiZXhwIjoxNzgyNDgzMzQzfQ.e-_XqOGdiyF_IGEHpZsVMNJ7Wt5wxD5pdWLRd66ryKw" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                 ) : (
                   <div className="text-center text-slate-400">
                     <CameraOff className="h-12 w-12 mx-auto mb-3" />
@@ -263,7 +263,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="relative aspect-video bg-gradient-to-b from-slate-700 to-slate-800 flex items-center justify-center">
+              <div className="relative bg-gradient-to-b from-slate-700 to-slate-800 flex items-center justify-center" style={{ aspectRatio: '9/16' }}>
                 {camera2Active ? (
                   <div className="text-center">
                     <div className="w-40 h-24 bg-gradient-to-b from-amber-600 to-amber-800 rounded-lg shadow-2xl mb-4 relative border border-amber-500/20">
