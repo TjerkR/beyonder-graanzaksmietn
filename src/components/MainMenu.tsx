@@ -1,23 +1,54 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Play, Trophy, LogOut, User } from 'lucide-react';
+import GameSetup from './GameSetup';
+import GameView from './GameView';
 
 const MainMenu = () => {
   const { user, signOut } = useAuth();
+  const [currentView, setCurrentView] = useState<'menu' | 'setup' | 'game'>('menu');
+  const [gameData, setGameData] = useState<{
+    team1Player1: string;
+    team1Player2: string;
+    team2Player1: string;
+    team2Player2: string;
+  } | null>(null);
 
   const handleNewGame = () => {
-    // TODO: Navigate to new game setup
-    console.log('Starting new game...');
+    setCurrentView('setup');
+  };
+
+  const handleStartGame = (players: {
+    team1Player1: string;
+    team1Player2: string;
+    team2Player1: string;
+    team2Player2: string;
+  }) => {
+    setGameData(players);
+    setCurrentView('game');
+  };
+
+  const handleBackToMenu = () => {
+    setCurrentView('menu');
+    setGameData(null);
   };
 
   const handleScoreboard = () => {
     // TODO: Navigate to scoreboard
     console.log('Opening scoreboard...');
   };
+
+  if (currentView === 'setup') {
+    return <GameSetup onStartGame={handleStartGame} onBack={handleBackToMenu} />;
+  }
+
+  if (currentView === 'game' && gameData) {
+    return <GameView players={gameData} onBack={handleBackToMenu} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
