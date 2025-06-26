@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Users, Camera, CameraOff, Plus, Minus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiplayerGame } from '@/hooks/useMultiplayerGame';
+import GameChat from './GameChat';
 
 interface GameViewProps {
   players: {
@@ -25,6 +25,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
   const { currentGame, updateScore } = useMultiplayerGame();
   const [camera1Active, setCamera1Active] = useState(true);
   const [camera2Active, setCamera2Active] = useState(true);
+  const [chatOpen, setChatOpen] = useState(false);
 
   // Use scores from the current game if available, otherwise use local state
   const team1Score = currentGame?.team1_score || 0;
@@ -306,6 +307,13 @@ const GameView = ({ players, onBack }: GameViewProps) => {
           </Card>
         </div>
       </div>
+
+      {/* Chat Component */}
+      <GameChat 
+        gameId={currentGame?.id || null}
+        isOpen={chatOpen}
+        onToggle={() => setChatOpen(!chatOpen)}
+      />
     </div>
   );
 };
