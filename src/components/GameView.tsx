@@ -53,6 +53,12 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     currentGame?.team2_player2_id === user.id
   );
 
+  // Determine if user is on the winning team
+  const isUserOnWinningTeam = user && winningTeam && (
+    (winningTeam === 'team1' && canControlTeam1) ||
+    (winningTeam === 'team2' && canControlTeam2)
+  );
+
   // Check if either team has reached 21 points
   const gameCanEnd = team1Score >= 21 || team2Score >= 21;
 
@@ -445,6 +451,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
         <VictoryScreen
           show={showVictoryScreen}
           winningTeam={winningTeam}
+          isUserOnWinningTeam={!!isUserOnWinningTeam}
           onClose={handleVictoryClose}
         />
       )}
