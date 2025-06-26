@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,10 +6,14 @@ import { ArrowLeft, Users, Camera, CameraOff, Plus, Minus } from 'lucide-react';
 
 interface GameViewProps {
   players: {
-    team1Player1: string;
-    team1Player2: string;
-    team2Player1: string;
-    team2Player2: string;
+    team1Player1Id: string;
+    team1Player2Id: string;
+    team2Player1Id: string;
+    team2Player2Id: string;
+    team1Player1Name: string;
+    team1Player2Name: string;
+    team2Player1Name: string;
+    team2Player2Name: string;
   };
   onBack: () => void;
 }
@@ -45,7 +50,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Cornhole Arena
               </h1>
-              <p className="text-slate-400 text-sm">Remote Competition</p>
+              <p className="text-slate-400 text-sm">Multiplayer Competition</p>
             </div>
           </div>
           <div className="flex items-center space-x-2 text-slate-300">
@@ -146,7 +151,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                 <div className="flex items-center justify-center p-4 bg-slate-700/50 rounded-lg border border-slate-600">
                   <div className="text-center">
                     <div className="text-lg font-semibold text-blue-200">
-                      {players.team1Player1}
+                      {players.team1Player1Name}
                     </div>
                     <div className="text-sm text-slate-400">Player 1</div>
                   </div>
@@ -154,7 +159,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                 <div className="flex items-center justify-center p-4 bg-slate-700/50 rounded-lg border border-slate-600">
                   <div className="text-center">
                     <div className="text-lg font-semibold text-blue-200">
-                      {players.team1Player2}
+                      {players.team1Player2Name}
                     </div>
                     <div className="text-sm text-slate-400">Player 2</div>
                   </div>
@@ -192,7 +197,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                 <div className="flex items-center justify-center p-4 bg-slate-700/50 rounded-lg border border-slate-600">
                   <div className="text-center">
                     <div className="text-lg font-semibold text-purple-200">
-                      {players.team2Player1}
+                      {players.team2Player1Name}
                     </div>
                     <div className="text-sm text-slate-400">Player 1</div>
                   </div>
@@ -200,7 +205,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                 <div className="flex items-center justify-center p-4 bg-slate-700/50 rounded-lg border border-slate-600">
                   <div className="text-center">
                     <div className="text-lg font-semibold text-purple-200">
-                      {players.team2Player2}
+                      {players.team2Player2Name}
                     </div>
                     <div className="text-sm text-slate-400">Player 2</div>
                   </div>
@@ -233,7 +238,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
           <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm max-w-md">
             <CardContent className="p-6 text-center">
               <div className="text-xl font-semibold text-white mb-2">
-                🎯 Remote Cornhole Match
+                🎯 Multiplayer Cornhole Match
               </div>
               <p className="text-slate-400 mb-6 text-sm">
                 Live camera feeds connected • Real-time scoring

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,10 +11,14 @@ const MainMenu = () => {
   const { user, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<'menu' | 'setup' | 'game'>('menu');
   const [gameData, setGameData] = useState<{
-    team1Player1: string;
-    team1Player2: string;
-    team2Player1: string;
-    team2Player2: string;
+    team1Player1Id: string;
+    team1Player2Id: string;
+    team2Player1Id: string;
+    team2Player2Id: string;
+    team1Player1Name: string;
+    team1Player2Name: string;
+    team2Player1Name: string;
+    team2Player2Name: string;
   } | null>(null);
 
   const handleNewGame = () => {
@@ -23,10 +26,14 @@ const MainMenu = () => {
   };
 
   const handleStartGame = (players: {
-    team1Player1: string;
-    team1Player2: string;
-    team2Player1: string;
-    team2Player2: string;
+    team1Player1Id: string;
+    team1Player2Id: string;
+    team2Player1Id: string;
+    team2Player2Id: string;
+    team1Player1Name: string;
+    team1Player2Name: string;
+    team2Player1Name: string;
+    team2Player2Name: string;
   }) => {
     setGameData(players);
     setCurrentView('game');

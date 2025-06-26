@@ -19,8 +19,8 @@ export type Database = {
           team1_player1_id: string
           team1_player2_id: string
           team1_score: number | null
-          team2_player1: string
-          team2_player2: string
+          team2_player1_id: string
+          team2_player2_id: string
           winner1_id: string | null
           winner2_id: string | null
         }
@@ -33,8 +33,8 @@ export type Database = {
           team1_player1_id: string
           team1_player2_id: string
           team1_score?: number | null
-          team2_player1: string
-          team2_player2: string
+          team2_player1_id: string
+          team2_player2_id: string
           winner1_id?: string | null
           winner2_id?: string | null
         }
@@ -47,12 +47,40 @@ export type Database = {
           team1_player1_id?: string
           team1_player2_id?: string
           team1_score?: number | null
-          team2_player1?: string
-          team2_player2?: string
+          team2_player1_id?: string
+          team2_player2_id?: string
           winner1_id?: string | null
           winner2_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_team1_player1"
+            columns: ["team1_player1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_team1_player2"
+            columns: ["team1_player2_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_team2_player1"
+            columns: ["team2_player1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_team2_player2"
+            columns: ["team2_player2_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "games_team1_player1_id_fkey"
             columns: ["team1_player1_id"]
@@ -69,14 +97,14 @@ export type Database = {
           },
           {
             foreignKeyName: "games_team2_player1_fkey"
-            columns: ["team2_player1"]
+            columns: ["team2_player1_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "games_team2_player2_fkey"
-            columns: ["team2_player2"]
+            columns: ["team2_player2_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -193,6 +221,41 @@ export type Database = {
             foreignKeyName: "scores_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_presence: {
+        Row: {
+          created_at: string
+          id: string
+          is_online: boolean
+          last_seen: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_online?: boolean
+          last_seen?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_online?: boolean
+          last_seen?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_presence_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
