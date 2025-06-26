@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Users, Camera, CameraOff, Plus, Minus } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Users, Camera, CameraOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiplayerGame } from '@/hooks/useMultiplayerGame';
 import GameChat from './GameChat';
@@ -41,19 +43,20 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     currentGame?.team2_player2_id === user.id
   );
 
-  const handleScoreUpdate = async (team: 'team1' | 'team2', increment: number) => {
+  const handleScoreChange = async (team: 'team1' | 'team2', newScore: string) => {
     if (!currentGame) return;
 
-    const currentScore = team === 'team1' ? team1Score : team2Score;
-    const newScore = Math.max(0, currentScore + increment);
-
-    console.log(`Updating ${team} score from ${currentScore} to ${newScore}`);
+    const scoreValue = parseInt(newScore);
+    console.log(`Updating ${team} score to ${scoreValue}`);
     
-    const success = await updateScore(currentGame.id, team, newScore);
+    const success = await updateScore(currentGame.id, team, scoreValue);
     if (!success) {
       console.error('Failed to update score');
     }
   };
+
+  // Generate score options from 0 to 12
+  const scoreOptions = Array.from({ length: 13 }, (_, i) => i);
 
   useEffect(() => {
     console.log('GameView mounted with current game:', currentGame);
@@ -205,25 +208,27 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center space-x-2 mt-6">
-                <Button
-                  onClick={() => handleScoreUpdate('team1', -1)}
+              <div className="flex justify-center mt-6">
+                <Select 
+                  value={team1Score.toString()} 
+                  onValueChange={(value) => handleScoreChange('team1', value)}
                   disabled={!canControlTeam1}
-                  variant="outline"
-                  size="sm"
-                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
                 >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <Button
-                  onClick={() => handleScoreUpdate('team1', 1)}
-                  disabled={!canControlTeam1}
-                  variant="outline"
-                  size="sm"
-                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                  <SelectTrigger className="w-24 bg-slate-700 border-slate-600 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-600">
+                    {scoreOptions.map((score) => (
+                      <SelectItem 
+                        key={score} 
+                        value={score.toString()}
+                        className="text-white hover:bg-slate-700"
+                      >
+                        {score}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
@@ -256,25 +261,27 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center space-x-2 mt-6">
-                <Button
-                  onClick={() => handleScoreUpdate('team2', -1)}
+              <div className="flex justify-center mt-6">
+                <Select 
+                  value={team2Score.toString()} 
+                  onValueChange={(value) => handleScoreChange('team2', value)}
                   disabled={!canControlTeam2}
-                  variant="outline"
-                  size="sm"
-                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
                 >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <Button
-                  onClick={() => handleScoreUpdate('team2', 1)}
-                  disabled={!canControlTeam2}
-                  variant="outline"
-                  size="sm"
-                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                  <SelectTrigger className="w-24 bg-slate-700 border-slate-600 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-600">
+                    {scoreOptions.map((score) => (
+                      <SelectItem 
+                        key={score} 
+                        value={score.toString()}
+                        className="text-white hover:bg-slate-700"
+                      >
+                        {score}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
