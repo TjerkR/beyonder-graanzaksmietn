@@ -72,7 +72,7 @@ const PlayerSelector = ({
         })}
         {onlineUsers.length === 0 && (
           <div className="text-center py-8 text-slate-400">
-            <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+            <User className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p className="text-lg">No other players online</p>
             <p className="text-sm">Players will appear here when they join</p>
           </div>
