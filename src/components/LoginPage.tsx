@@ -13,7 +13,7 @@ const LoginPage = () => {
       {/* Beyonder Logo */}
       <div className="absolute top-6 left-6 z-20">
         <img 
-          src="/placeholder.svg" 
+          src="https://beyonder.eu/storage/uploads/0184aeeb-1507-4a47-8e6e-c3076839cab0/logo-name.svg" 
           alt="Beyonder" 
           className="h-8 w-auto"
         />
