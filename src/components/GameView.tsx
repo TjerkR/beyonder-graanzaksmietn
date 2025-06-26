@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +8,7 @@ import { useMultiplayerGame } from '@/hooks/useMultiplayerGame';
 import { supabase } from '@/integrations/supabase/client';
 import GameChat from './GameChat';
 import ScoreMessageOverlay from './ScoreMessageOverlay';
+import VictoryScreen from './VictoryScreen';
 
 interface GameViewProps {
   players: {
@@ -36,6 +36,8 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     team: 'team1' | 'team2';
   } | null>(null);
   const [isEndingGame, setIsEndingGame] = useState(false);
+  const [showVictoryScreen, setShowVictoryScreen] = useState(false);
+  const [winningTeam, setWinningTeam] = useState<'team1' | 'team2' | null>(null);
 
   // Use scores from the current game if available, otherwise use local state
   const team1Score = currentGame?.team1_score || 0;
@@ -150,6 +152,22 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     console.log('User can control team1:', canControlTeam1);
     console.log('User can control team2:', canControlTeam2);
   }, [currentGame, canControlTeam1, canControlTeam2]);
+
+  // Check if either team has reached 21 points and show victory screen
+  useEffect(() => {
+    if (team1Score >= 21 && !showVictoryScreen) {
+      setWinningTeam('team1');
+      setShowVictoryScreen(true);
+    } else if (team2Score >= 21 && !showVictoryScreen) {
+      setWinningTeam('team2');
+      setShowVictoryScreen(true);
+    }
+  }, [team1Score, team2Score, showVictoryScreen]);
+
+  const handleVictoryClose = () => {
+    setShowVictoryScreen(false);
+    setWinningTeam(null);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -419,6 +437,15 @@ const GameView = ({ players, onBack }: GameViewProps) => {
             setShowScoreMessage(false);
             setScoreMessageData(null);
           }}
+        />
+      )}
+
+      {/* Victory Screen */}
+      {winningTeam && (
+        <VictoryScreen
+          show={showVictoryScreen}
+          winningTeam={winningTeam}
+          onClose={handleVictoryClose}
         />
       )}
     </div>
