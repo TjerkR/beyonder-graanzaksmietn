@@ -38,6 +38,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
   const [isEndingGame, setIsEndingGame] = useState(false);
   const [showVictoryScreen, setShowVictoryScreen] = useState(false);
   const [winningTeam, setWinningTeam] = useState<'team1' | 'team2' | null>(null);
+  const [victoryShown, setVictoryShown] = useState(false);
 
   // Use scores from the current game if available, otherwise use local state
   const team1Score = currentGame?.team1_score || 0;
@@ -159,20 +160,24 @@ const GameView = ({ players, onBack }: GameViewProps) => {
     console.log('User can control team2:', canControlTeam2);
   }, [currentGame, canControlTeam1, canControlTeam2]);
 
-  // Check if either team has reached 21 points and show victory screen
+  // Check if either team has reached 21 points and show victory screen only once
   useEffect(() => {
-    if (team1Score >= 21 && !showVictoryScreen) {
-      setWinningTeam('team1');
-      setShowVictoryScreen(true);
-    } else if (team2Score >= 21 && !showVictoryScreen) {
-      setWinningTeam('team2');
-      setShowVictoryScreen(true);
+    if (!victoryShown) {
+      if (team1Score >= 21 && !showVictoryScreen) {
+        setWinningTeam('team1');
+        setShowVictoryScreen(true);
+        setVictoryShown(true);
+      } else if (team2Score >= 21 && !showVictoryScreen) {
+        setWinningTeam('team2');
+        setShowVictoryScreen(true);
+        setVictoryShown(true);
+      }
     }
-  }, [team1Score, team2Score, showVictoryScreen]);
+  }, [team1Score, team2Score, showVictoryScreen, victoryShown]);
 
   const handleVictoryClose = () => {
     setShowVictoryScreen(false);
-    setWinningTeam(null);
+    // Don't reset winningTeam or victoryShown - keep them to prevent showing again
   };
 
   return (
