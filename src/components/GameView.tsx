@@ -1,8 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Users, Camera, CameraOff, Plus, Minus } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useMultiplayerGame } from '@/hooks/useMultiplayerGame';
 
 interface GameViewProps {
   players: {
@@ -19,10 +21,44 @@ interface GameViewProps {
 }
 
 const GameView = ({ players, onBack }: GameViewProps) => {
-  const [team1Score, setTeam1Score] = useState(0);
-  const [team2Score, setTeam2Score] = useState(0);
+  const { user } = useAuth();
+  const { currentGame, updateScore } = useMultiplayerGame();
   const [camera1Active, setCamera1Active] = useState(true);
   const [camera2Active, setCamera2Active] = useState(true);
+
+  // Use scores from the current game if available, otherwise use local state
+  const team1Score = currentGame?.team1_score || 0;
+  const team2Score = currentGame?.team2_score || 0;
+
+  // Determine which team the current user can control
+  const canControlTeam1 = user && (
+    currentGame?.team1_player1_id === user.id || 
+    currentGame?.team1_player2_id === user.id
+  );
+  const canControlTeam2 = user && (
+    currentGame?.team2_player1_id === user.id || 
+    currentGame?.team2_player2_id === user.id
+  );
+
+  const handleScoreUpdate = async (team: 'team1' | 'team2', increment: number) => {
+    if (!currentGame) return;
+
+    const currentScore = team === 'team1' ? team1Score : team2Score;
+    const newScore = Math.max(0, currentScore + increment);
+
+    console.log(`Updating ${team} score from ${currentScore} to ${newScore}`);
+    
+    const success = await updateScore(currentGame.id, team, newScore);
+    if (!success) {
+      console.error('Failed to update score');
+    }
+  };
+
+  useEffect(() => {
+    console.log('GameView mounted with current game:', currentGame);
+    console.log('User can control team1:', canControlTeam1);
+    console.log('User can control team2:', canControlTeam2);
+  }, [currentGame, canControlTeam1, canControlTeam2]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -145,6 +181,9 @@ const GameView = ({ players, onBack }: GameViewProps) => {
             <CardHeader className="text-center bg-gradient-to-r from-blue-900/20 to-blue-800/20 border-b border-slate-700">
               <CardTitle className="text-2xl text-blue-300">Team 1</CardTitle>
               <div className="text-5xl font-bold text-white mt-4 font-mono">{team1Score}</div>
+              {canControlTeam1 && (
+                <div className="text-sm text-green-400 font-medium">You can control this team's score</div>
+              )}
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
@@ -167,18 +206,20 @@ const GameView = ({ players, onBack }: GameViewProps) => {
               </div>
               <div className="flex justify-center space-x-2 mt-6">
                 <Button
-                  onClick={() => setTeam1Score(Math.max(0, team1Score - 1))}
+                  onClick={() => handleScoreUpdate('team1', -1)}
+                  disabled={!canControlTeam1}
                   variant="outline"
                   size="sm"
-                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600"
+                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <Button
-                  onClick={() => setTeam1Score(team1Score + 1)}
+                  onClick={() => handleScoreUpdate('team1', 1)}
+                  disabled={!canControlTeam1}
                   variant="outline"
                   size="sm"
-                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600"
+                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -191,6 +232,9 @@ const GameView = ({ players, onBack }: GameViewProps) => {
             <CardHeader className="text-center bg-gradient-to-r from-purple-900/20 to-purple-800/20 border-b border-slate-700">
               <CardTitle className="text-2xl text-purple-300">Team 2</CardTitle>
               <div className="text-5xl font-bold text-white mt-4 font-mono">{team2Score}</div>
+              {canControlTeam2 && (
+                <div className="text-sm text-green-400 font-medium">You can control this team's score</div>
+              )}
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
@@ -213,18 +257,20 @@ const GameView = ({ players, onBack }: GameViewProps) => {
               </div>
               <div className="flex justify-center space-x-2 mt-6">
                 <Button
-                  onClick={() => setTeam2Score(Math.max(0, team2Score - 1))}
+                  onClick={() => handleScoreUpdate('team2', -1)}
+                  disabled={!canControlTeam2}
                   variant="outline"
                   size="sm"
-                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600"
+                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <Button
-                  onClick={() => setTeam2Score(team2Score + 1)}
+                  onClick={() => handleScoreUpdate('team2', 1)}
+                  disabled={!canControlTeam2}
                   variant="outline"
                   size="sm"
-                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600"
+                  className="border-slate-600 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -241,7 +287,7 @@ const GameView = ({ players, onBack }: GameViewProps) => {
                 🎯 Multiplayer Cornhole Match
               </div>
               <p className="text-slate-400 mb-6 text-sm">
-                Live camera feeds connected • Real-time scoring
+                Live camera feeds connected • Real-time scoring • {canControlTeam1 || canControlTeam2 ? 'Score control enabled' : 'View only mode'}
               </p>
               <div className="flex justify-center space-x-4">
                 <Button 

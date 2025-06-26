@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Play, Trophy, LogOut, User, Settings, BarChart3 } from 'lucide-react';
+import { useMultiplayerGame } from '@/hooks/useMultiplayerGame';
 import GameSetup from './GameSetup';
 import GameView from './GameView';
 
 const MainMenu = () => {
   const { user, signOut } = useAuth();
+  const { currentGame, loading: gameLoading } = useMultiplayerGame();
   const [currentView, setCurrentView] = useState<'menu' | 'setup' | 'game'>('menu');
   const [gameData, setGameData] = useState<{
     team1Player1Id: string;
@@ -20,6 +23,25 @@ const MainMenu = () => {
     team2Player1Name: string;
     team2Player2Name: string;
   } | null>(null);
+
+  // Check if user has an active game and redirect accordingly
+  useEffect(() => {
+    if (currentGame && currentView === 'menu') {
+      console.log('User has active game, redirecting from main menu');
+      const gameData = {
+        team1Player1Id: currentGame.team1_player1_id,
+        team1Player2Id: currentGame.team1_player2_id,
+        team2Player1Id: currentGame.team2_player1_id,
+        team2Player2Id: currentGame.team2_player2_id,
+        team1Player1Name: currentGame.team1_player1_name,
+        team1Player2Name: currentGame.team1_player2_name,
+        team2Player1Name: currentGame.team2_player1_name,
+        team2Player2Name: currentGame.team2_player2_name,
+      };
+      setGameData(gameData);
+      setCurrentView('game');
+    }
+  }, [currentGame, currentView]);
 
   const handleNewGame = () => {
     setCurrentView('setup');
@@ -127,6 +149,13 @@ const MainMenu = () => {
               Your professional cornhole competition platform with enterprise-grade features, 
               real-time analytics, and seamless remote gameplay experience.
             </p>
+            {currentGame && (
+              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg max-w-md mx-auto">
+                <p className="text-green-800 font-medium">
+                  🎮 You have an active multiplayer game! Click "Start Tournament" to rejoin.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Action Cards */}
@@ -146,7 +175,7 @@ const MainMenu = () => {
               </CardHeader>
               <CardContent className="px-8 pb-8">
                 <Button className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg">
-                  Initialize Competition
+                  {currentGame ? 'Rejoin Active Game' : 'Initialize Competition'}
                 </Button>
                 <div className="mt-4 text-center">
                   <p className="text-sm text-slate-500">HD live feeds • Real-time scoring • Cloud sync</p>

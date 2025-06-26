@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Play, Users, Loader2 } from 'lucide-react';
 import { usePresence } from '@/hooks/usePresence';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMultiplayerGame } from '@/hooks/useMultiplayerGame';
 import PlayerSelector from './PlayerSelector';
 
 interface GameSetupProps {
@@ -24,8 +25,28 @@ interface GameSetupProps {
 const GameSetup = ({ onStartGame, onBack }: GameSetupProps) => {
   const { user } = useAuth();
   const { onlineUsers, loading } = usePresence();
+  const { createGame, currentGame } = useMultiplayerGame();
   const [team1Players, setTeam1Players] = useState<string[]>([]);
   const [team2Players, setTeam2Players] = useState<string[]>([]);
+  const [isCreatingGame, setIsCreatingGame] = useState(false);
+
+  // Check if user is already in an active game
+  useEffect(() => {
+    if (currentGame) {
+      console.log('User has active game, redirecting to game view');
+      const gameData = {
+        team1Player1Id: currentGame.team1_player1_id,
+        team1Player2Id: currentGame.team1_player2_id,
+        team2Player1Id: currentGame.team2_player1_id,
+        team2Player2Id: currentGame.team2_player2_id,
+        team1Player1Name: currentGame.team1_player1_name,
+        team1Player2Name: currentGame.team1_player2_name,
+        team2Player1Name: currentGame.team2_player1_name,
+        team2Player2Name: currentGame.team2_player2_name,
+      };
+      onStartGame(gameData);
+    }
+  }, [currentGame, onStartGame]);
 
   const handleTeam1PlayerSelect = (playerId: string) => {
     if (team1Players.includes(playerId)) {
@@ -49,9 +70,11 @@ const GameSetup = ({ onStartGame, onBack }: GameSetupProps) => {
     return player?.full_name || player?.email || 'Unknown Player';
   };
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
     if (team1Players.length === 2 && team2Players.length === 2) {
-      onStartGame({
+      setIsCreatingGame(true);
+      
+      const gameData = {
         team1Player1Id: team1Players[0],
         team1Player2Id: team1Players[1],
         team2Player1Id: team2Players[0],
@@ -60,7 +83,19 @@ const GameSetup = ({ onStartGame, onBack }: GameSetupProps) => {
         team1Player2Name: getPlayerName(team1Players[1]),
         team2Player1Name: getPlayerName(team2Players[0]),
         team2Player2Name: getPlayerName(team2Players[1])
-      });
+      };
+
+      console.log('Starting game with data:', gameData);
+      
+      const createdGame = await createGame(gameData);
+      
+      if (createdGame) {
+        console.log('Game created, starting game view');
+        onStartGame(gameData);
+      } else {
+        console.error('Failed to create game');
+        setIsCreatingGame(false);
+      }
     }
   };
 
@@ -156,14 +191,23 @@ const GameSetup = ({ onStartGame, onBack }: GameSetupProps) => {
         <div className="text-center">
           <Button
             onClick={handleStartGame}
-            disabled={!isValid}
+            disabled={!isValid || isCreatingGame}
             size="lg"
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-12 py-4 text-lg font-semibold rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
           >
-            <Play className="h-6 w-6 mr-3" />
-            Start Multiplayer Game
+            {isCreatingGame ? (
+              <>
+                <Loader2 className="h-6 w-6 mr-3 animate-spin" />
+                Creating Game...
+              </>
+            ) : (
+              <>
+                <Play className="h-6 w-6 mr-3" />
+                Start Multiplayer Game
+              </>
+            )}
           </Button>
-          {!isValid && (
+          {!isValid && !isCreatingGame && (
             <p className="text-purple-300 mt-4 text-sm">
               Please select 2 players for each team to start the game
             </p>

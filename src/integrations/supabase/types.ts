@@ -146,6 +146,60 @@ export type Database = {
         }
         Relationships: []
       }
+      multiplayer_games: {
+        Row: {
+          created_at: string
+          host_id: string
+          id: string
+          status: string | null
+          team1_player1_id: string
+          team1_player1_name: string
+          team1_player2_id: string
+          team1_player2_name: string
+          team1_score: number | null
+          team2_player1_id: string
+          team2_player1_name: string
+          team2_player2_id: string
+          team2_player2_name: string
+          team2_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          host_id: string
+          id?: string
+          status?: string | null
+          team1_player1_id: string
+          team1_player1_name: string
+          team1_player2_id: string
+          team1_player2_name: string
+          team1_score?: number | null
+          team2_player1_id: string
+          team2_player1_name: string
+          team2_player2_id: string
+          team2_player2_name: string
+          team2_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          host_id?: string
+          id?: string
+          status?: string | null
+          team1_player1_id?: string
+          team1_player1_name?: string
+          team1_player2_id?: string
+          team1_player2_name?: string
+          team1_score?: number | null
+          team2_player1_id?: string
+          team2_player1_name?: string
+          team2_player2_id?: string
+          team2_player2_name?: string
+          team2_score?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
