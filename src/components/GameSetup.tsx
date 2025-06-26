@@ -84,69 +84,87 @@ const GameSetup = ({ onStartGame, onBack }: GameSetupProps) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-amber-600" />
-          <p className="text-amber-800">Loading online players...</p>
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-purple-400" />
+          <p className="text-purple-200">Loading online players...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center mb-6">
-          <Button
-            onClick={onBack}
-            variant="outline"
-            size="sm"
-            className="mr-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-amber-800">Setup Multiplayer Game</h1>
-            <div className="flex items-center text-amber-700 mt-1">
-              <Users className="h-4 w-4 mr-2" />
-              <span>{allAvailablePlayers.length} players online</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header with Logo */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <Button
+              onClick={onBack}
+              variant="outline"
+              size="sm"
+              className="border-purple-400 text-purple-300 hover:bg-purple-400 hover:text-white"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-white">Setup Multiplayer Game</h1>
+              <div className="flex items-center text-purple-300 mt-1">
+                <Users className="h-4 w-4 mr-2" />
+                <span>{allAvailablePlayers.length} players online</span>
+              </div>
             </div>
+          </div>
+          
+          {/* Beyonder Logo */}
+          <div className="flex items-center">
+            <img 
+              src="https://beyonder.eu/storage/uploads/0184aeeb-1507-4a47-8e6e-c3076839cab0/logo-name.svg" 
+              alt="Beyonder" 
+              className="h-12 w-auto"
+            />
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <PlayerSelector
-            onlineUsers={team1AvailablePlayers}
-            selectedPlayers={team1Players}
-            onPlayerSelect={handleTeam1PlayerSelect}
-            maxPlayers={2}
-            title="Team 1"
-            description="Select 2 players for Team 1"
-          />
+        {/* Team Selection Cards */}
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 rounded-xl border border-blue-400/30 p-1">
+            <PlayerSelector
+              onlineUsers={team1AvailablePlayers}
+              selectedPlayers={team1Players}
+              onPlayerSelect={handleTeam1PlayerSelect}
+              maxPlayers={2}
+              title="Team 1"
+              description="Select 2 players for Team 1"
+            />
+          </div>
 
-          <PlayerSelector
-            onlineUsers={team2AvailablePlayers}
-            selectedPlayers={team2Players}
-            onPlayerSelect={handleTeam2PlayerSelect}
-            maxPlayers={2}
-            title="Team 2"
-            description="Select 2 players for Team 2"
-          />
+          <div className="bg-gradient-to-br from-red-900/50 to-red-800/30 rounded-xl border border-red-400/30 p-1">
+            <PlayerSelector
+              onlineUsers={team2AvailablePlayers}
+              selectedPlayers={team2Players}
+              onPlayerSelect={handleTeam2PlayerSelect}
+              maxPlayers={2}
+              title="Team 2"
+              description="Select 2 players for Team 2"
+            />
+          </div>
         </div>
 
+        {/* Start Game Button */}
         <div className="text-center">
           <Button
             onClick={handleStartGame}
             disabled={!isValid}
             size="lg"
-            className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-12 py-4 text-lg font-semibold rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
           >
-            <Play className="h-5 w-5 mr-2" />
+            <Play className="h-6 w-6 mr-3" />
             Start Multiplayer Game
           </Button>
           {!isValid && (
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-purple-300 mt-4 text-sm">
               Please select 2 players for each team to start the game
             </p>
           )}

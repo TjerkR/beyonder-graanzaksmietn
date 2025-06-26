@@ -24,15 +24,15 @@ const PlayerSelector = ({
   description 
 }: PlayerSelectorProps) => {
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-        <div className="text-sm text-gray-600">
+    <Card className="bg-slate-800/90 border-slate-600 text-white h-full">
+      <CardHeader className="text-center pb-4">
+        <CardTitle className="text-2xl font-bold text-white">{title}</CardTitle>
+        <CardDescription className="text-slate-300">{description}</CardDescription>
+        <div className="text-sm text-purple-300 font-medium">
           Selected: {selectedPlayers.length}/{maxPlayers}
         </div>
       </CardHeader>
-      <CardContent className="space-y-2 max-h-60 overflow-y-auto">
+      <CardContent className="space-y-3 max-h-80 overflow-y-auto">
         {onlineUsers.map((user) => {
           const isSelected = selectedPlayers.includes(user.id);
           const canSelect = !isSelected && selectedPlayers.length < maxPlayers;
@@ -43,32 +43,38 @@ const PlayerSelector = ({
               onClick={() => onPlayerSelect(user.id)}
               disabled={!canSelect && !isSelected}
               variant={isSelected ? "default" : "outline"}
-              className="w-full justify-start h-auto p-3"
+              className={`w-full justify-start h-auto p-4 transition-all duration-200 ${
+                isSelected 
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-none" 
+                  : "bg-slate-700/50 border-slate-500 text-slate-200 hover:bg-slate-600/70 hover:border-purple-400"
+              }`}
             >
               <div className="flex items-center space-x-3 w-full">
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-10 w-10 border-2 border-slate-500">
                   <AvatarImage src={user.avatar_url || undefined} />
-                  <AvatarFallback className="bg-blue-100 text-blue-700">
-                    <User className="h-4 w-4" />
+                  <AvatarFallback className="bg-slate-600 text-slate-200">
+                    <User className="h-5 w-5" />
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 text-left">
-                  <div className="font-medium">
+                  <div className="font-medium text-base">
                     {user.full_name || user.email || 'Anonymous'}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-sm text-slate-400">
                     {user.email}
                   </div>
                 </div>
-                {isSelected && <Check className="h-4 w-4 text-green-600" />}
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                {isSelected && <Check className="h-5 w-5 text-green-400" />}
+                <div className="w-3 h-3 bg-green-400 rounded-full shadow-lg"></div>
               </div>
             </Button>
           );
         })}
         {onlineUsers.length === 0 && (
-          <div className="text-center py-4 text-gray-500">
-            No other players online
+          <div className="text-center py-8 text-slate-400">
+            <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+            <p className="text-lg">No other players online</p>
+            <p className="text-sm">Players will appear here when they join</p>
           </div>
         )}
       </CardContent>
